@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JEB — Camisetas a tu manera</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Space+Grotesk:wght@400;500;700&family=Permanent+Marker&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a href="#top" class="logo">JE<span>B</span></a>
+    <ul class="nav-links">
+      <li><a href="#catalogo">Catálogo</a></li>
+      <li><a href="#personalizar">Personalizar</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="ghost-btn" id="openRegister">Registrarse</button>
+      <button class="cart-btn" id="openCart">Carrito <span class="cart-count" id="cartCount">0</span></button>
+    </div>
+  </div>
+</nav>
+
+<div id="top" class="hero">
+  <div class="floaters" id="floaters"></div>
+  <div class="hero-eyebrow">Camisetas base + estampado libre</div>
+  <h1>Tu camiseta, <em>tu diseño</em>, tu manera.</h1>
+  <p>Elige el color, súbete tu propio estampado o texto y mira el resultado antes de comprar. Si prefieres dejarla al natural, también funciona perfecto así.</p>
+  <div class="hero-ctas">
+    <a href="#catalogo" class="btn btn-primary">Ver catálogo</a>
+    <a href="#personalizar" class="btn btn-ghost">Personalizar ahora</a>
+  </div>
+</div>
+
+<section id="catalogo">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Camiseta Classic JEB</h2>
+      <p>Un solo corte, cinco colores. Algodón suave, calce unisex, lista para llevar tal cual o como base de tu propio diseño.</p>
+    </div>
+    <div class="product-card">
+      <div class="product-stage">
+        <span class="badge-off">-20% OFF</span>
+        <img id="catalogImg" src="" alt="Camiseta JEB">
+      </div>
+      <div class="product-info">
+        <h3 id="catalogName">Classic JEB — Blanca</h3>
+        <p class="desc">Corte recto clásico, cuello redondo y tela 100% algodón peinado. La favorita para estampar sin que nada le reste protagonismo a tu diseño.</p>
+        <div class="price-row">
+          <span class="price-old">$120.000</span>
+          <span class="price-final">$96.000</span>
+        </div>
+        <div class="swatches" id="catalogSwatches"></div>
+        <div class="product-actions">
+          <button class="btn btn-primary" id="addPlain">Agregar tal cual</button>
+          <a href="#personalizar" class="btn btn-ghost" id="goCustomize">Personalizar esta camiseta</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="customizer" id="personalizar">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Personaliza tu estampado</h2>
+      <p>Agrega texto o tu propia imagen, arrástralo a donde quieras y ajusta el tamaño. Lo que ves aquí es lo que se imprime.</p>
+    </div>
+    <div class="custom-grid">
+      <div class="stage-wrap">
+        <div class="stage" id="stage">
+          <img class="base" id="stageImg" src="" alt="Vista previa camiseta">
+          <div class="stage-empty-hint" id="stageHint">Sin estampado — se ve tan bien así</div>
+        </div>
+        <p class="stage-tip">Toca un elemento y arrástralo sobre la camiseta para ubicarlo.</p>
+      </div>
+
+      <div class="panel">
+        <h3>Estampado</h3>
+        <p class="sub">Elige el color base y agrega tus elementos.</p>
+
+        <div class="field">
+          <label>Color de la camiseta</label>
+          <div class="swatches" id="customSwatches"></div>
+        </div>
+
+        <div class="add-row">
+          <button class="icon-btn" id="addText">+ Agregar texto</button>
+          <label class="icon-btn" for="fileUpload" style="text-align:center; display:flex; align-items:center; justify-content:center; margin:0;">+ Subir imagen</label>
+          <input type="file" id="fileUpload" accept="image/*" style="display:none;">
+        </div>
+
+        <div id="layerListWrap">
+          <p class="empty-note" id="noLayersNote">Aún no has agregado ningún elemento.</p>
+          <div class="layer-list" id="layerList"></div>
+        </div>
+
+        <div id="layerControls" style="display:none;">
+          <div class="field" id="textFieldWrap">
+            <label>Texto</label>
+            <input type="text" id="textInput" maxlength="24" placeholder="Escribe algo...">
+          </div>
+          <div class="row-2" id="fontColorRow">
+            <div class="field">
+              <label>Tipografía</label>
+              <select id="fontSelect">
+                <option value="'Fredoka', sans-serif">Redondeada</option>
+                <option value="'Space Grotesk', sans-serif">Moderna</option>
+                <option value="'Permanent Marker', cursive">Grafiti</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Color</label>
+              <input type="color" id="colorInput" value="#FF5722">
+            </div>
+          </div>
+          <div class="field">
+            <label>Tamaño</label>
+            <input type="range" id="scaleInput" min="0.5" max="2.2" step="0.05" value="1">
+          </div>
+        </div>
+
+        <div class="panel-actions">
+          <button class="icon-btn" id="clearLayers">Dejar sin estampado</button>
+          <button class="btn btn-primary" id="addCustomToCart" style="flex:1;">Agregar al carrito — $96.000</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <a href="#top" class="logo" style="font-size:22px;">JE<span>B</span></a>
+    <p>Camisetas base + tu estampado. Medellín, Colombia.</p>
+  </div>
+</footer>
+
+<div class="backdrop" id="backdrop"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <h3>Tu carrito</h3>
+    <button class="drawer-close" id="closeCart">&times;</button>
+  </div>
+  <div class="drawer-items" id="drawerItems">
+    <p class="drawer-empty">Tu carrito está vacío por ahora.</p>
+  </div>
+  <div class="drawer-foot">
+    <div class="drawer-total"><span>Total</span><b id="drawerTotal">$0</b></div>
+    <button class="btn btn-primary" style="width:100%;" id="checkoutBtn">Finalizar compra</button>
+  </div>
+</div>
+
+<div class="backdrop" id="regBackdrop"></div>
+<div class="modal" id="regModal">
+  <div class="drawer-head">
+    <h3 id="regTitle">Crea tu cuenta</h3>
+    <button class="drawer-close" id="closeRegister">&times;</button>
+  </div>
+  <form class="modal-body" id="registerForm" novalidate>
+    <div class="field">
+      <label for="regName">Nombre completo</label>
+      <input type="text" id="regName" placeholder="Tu nombre">
+    </div>
+    <div class="row-2">
+      <div class="field">
+        <label for="regAge">Edad</label>
+        <input type="number" id="regAge" min="13" max="99" placeholder="18">
+      </div>
+      <div class="field">
+        <label for="regCity">Ciudad</label>
+        <input type="text" id="regCity" placeholder="Medellín">
+      </div>
+    </div>
+    <div class="field">
+      <label for="regEmail">Correo electrónico</label>
+      <input type="email" id="regEmail" placeholder="tucorreo@ejemplo.com">
+    </div>
+    <div class="row-2">
+      <div class="field">
+        <label for="regPass">Contraseña</label>
+        <input type="password" id="regPass" placeholder="Mínimo 6 caracteres">
+      </div>
+      <div class="field">
+        <label for="regPass2">Confirmar contraseña</label>
+        <input type="password" id="regPass2" placeholder="Repite la contraseña">
+      </div>
+    </div>
+    <p class="form-error" id="regError"></p>
+    <button type="submit" class="btn btn-primary" style="width:100%;">Crear cuenta</button>
+  </form>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
