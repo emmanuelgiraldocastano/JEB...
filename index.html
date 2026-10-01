@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Space+Grotesk:wght@400;500;700&family=Permanent+Marker&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<!-- NUEVO: visor 3D oficial de Google -->
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
 </head>
 <body>
 
@@ -17,6 +19,7 @@
     <ul class="nav-links">
       <li><a href="#catalogo">Catálogo</a></li>
       <li><a href="#personalizar">Personalizar</a></li>
+      <li><a href="#visor3d">Vista 3D</a></li>
       <li><a href="#detalles">Detalles</a></li>
       <li><a href="#inspiracion">Inspiración</a></li>
     </ul>
@@ -97,15 +100,18 @@
     <div class="custom-grid">
       <div class="stage-wrap">
         <div class="view-tabs" id="viewTabs" role="tablist" aria-label="Vista de la camiseta">
-          <button type="button" class="active" data-side="front" role="tab">Frente <small id="cntFront"></small></button>
-          <button type="button" data-side="back" role="tab">Espalda <small id="cntBack"></small></button>
+          <button type="button" class="active" data-side="front" role="tab" aria-selected="true">Frente <small id="cntFront"></small></button>
+          <button type="button" data-side="back" role="tab" aria-selected="false">Espalda <small id="cntBack"></small></button>
         </div>
         <div class="stage" id="stage">
           <img class="base" id="stageImg" src="" alt="Vista previa camiseta">
+          <canvas class="ink-canvas" id="inkCanvas" aria-hidden="true"></canvas>
           <div class="print-area" id="printArea"><span>Área de impresión A4 · 21×30 cm</span></div>
           <div class="stage-empty-hint" id="stageHint">Sin estampado — se ve tan bien así</div>
         </div>
         <p class="stage-tip">Toca un elemento para seleccionarlo: arrástralo para moverlo y usa las esquinas para eliminar (×), rotar (↻) o cambiar el tamaño (⤡). Si se pone rojo, se sale del área imprimible.</p>
+        <p class="stage-tip">Toca fuera de la camiseta o pulsa <b>Esc</b> para ocultar los controles y ver tu estampado limpio.</p>
+        <button type="button" class="ghost-btn stage-3d-link" id="goView3d">Ver mi diseño en 3D · 360° →</button>
       </div>
 
       <div class="panel">
@@ -160,12 +166,41 @@
             <label>Rotación</label>
             <input type="range" id="rotInput" min="-180" max="180" step="1" value="0">
           </div>
+          <button type="button" class="icon-btn" id="hideControls">✓ Listo — ocultar controles</button>
         </div>
 
         <div class="panel-actions">
           <button class="icon-btn" id="clearLayers">Dejar sin estampado</button>
           <button class="btn btn-primary" id="addCustomToCart" style="flex:1;">Agregar al carrito — $96.000</button>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="visor3d">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Míralo en 3D</h2>
+      <p>Gira la camiseta 360°, acerca con la rueda del mouse o pellizcando, y revisa tu diseño por delante y por detrás. Se actualiza solo cuando cambias algo en el personalizador.</p>
+    </div>
+    <div class="viewer3d-card">
+      <model-viewer id="tee3d" alt="Camiseta JEB en 3D con tu diseño"
+        camera-controls touch-action="pan-y"
+        auto-rotate auto-rotate-delay="2500" rotation-per-second="16deg"
+        camera-orbit="0deg 80deg auto" min-camera-orbit="auto 20deg 45%" max-camera-orbit="auto 160deg 220%"
+        field-of-view="30deg"
+        shadow-intensity="1" shadow-softness="1" exposure="1.05" environment-image="neutral"
+        interaction-prompt="auto" loading="eager">
+      </model-viewer>
+      <div class="viewer3d-bar">
+        <div class="viewer3d-btns">
+          <button type="button" class="ghost-btn" id="view3dFront">Frente</button>
+          <button type="button" class="ghost-btn" id="view3dBack">Espalda</button>
+          <button type="button" class="ghost-btn" id="view3dSpin" aria-pressed="true">Girar solo</button>
+          <button type="button" class="ghost-btn" id="view3dRefresh">Actualizar diseño</button>
+        </div>
+        <p id="view3dStatus" role="status" aria-live="polite">Cargando visor 3D…</p>
       </div>
     </div>
   </div>

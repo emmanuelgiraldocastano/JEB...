@@ -334,10 +334,6 @@
     .floaters img{animation:none;}
   }
 
-/* =====================================================
-   MEJORAS: escala uniforme, tallas, vistas, manijas,
-   área de impresión, detalles, galería y responsive
-   ===================================================== */
 
 /* Todas las camisetas comparten la misma caja (corrige la café pequeña) */
 .product-stage img{width:min(300px,100%); height:auto; aspect-ratio:420/507; object-fit:contain;}
@@ -443,4 +439,45 @@
   .cart-row-price{grid-column:2; text-align:left;}
   .modal-head-light,.cart-rows,.cart-foot,.modal-body-light{padding-left:18px; padding-right:18px;}
   .gallery{grid-template-columns:repeat(2,1fr); gap:12px;}
+}
+
+
+/* =====================================================
+   NUEVO: estampado realista, vista limpia, visor 3D
+   ===================================================== */
+
+/* 1) Estampado realista: la tinta se dibuja en un canvas sobre la camiseta */
+.stage{isolation:isolate;}
+.ink-canvas{position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:1; display:none;}
+.stage.realistic .ink-canvas{display:block;}
+.ink-canvas.multiply{mix-blend-mode:multiply;}               /* camisetas claras: arrugas y textura se transparentan */
+/* el contenido DOM de cada capa sigue existiendo (para arrastrar), pero ya no se ve:
+   lo que se ve es el canvas realista. Si el canvas falla, vuelve al modo plano. */
+.stage.realistic .layer > :not(.handle){opacity:0;}
+.stage img.base, .ink-canvas{transition:opacity .17s;}
+.stage.swap img.base, .stage.swap .ink-canvas{opacity:.15;}
+
+/* 2) Vista limpia: sin marcos ni controles cuando no hay nada seleccionado */
+.layer:not(.selected){border-color:transparent;}
+.layer.out:not(.selected){border-color:transparent;}          /* antes quedaba un marco rojo permanente */
+.layer:not(.selected) .handle{display:none;}
+.print-area{transition:opacity .2s;}
+.stage.clean .print-area{opacity:0;}                          /* guía A4 oculta al previsualizar */
+#hideControls{width:100%; margin-top:6px;}
+
+/* 4) Visor 3D */
+#visor3d{background:var(--bg-soft); border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+.viewer3d-card{position:relative; background:radial-gradient(circle at 50% 30%, #262626, #141414 75%); border:1px solid var(--line); border-radius:24px; overflow:hidden;}
+#tee3d{display:block; width:100%; height:min(560px,70vh); --poster-color:transparent; --progress-bar-color:var(--accent); outline:none;}
+.viewer3d-bar{display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; padding:14px 18px; border-top:1px solid var(--line); background:rgba(0,0,0,.25);}
+.viewer3d-btns{display:flex; flex-wrap:wrap; gap:8px;}
+.viewer3d-btns .ghost-btn[aria-pressed="true"]{border-color:var(--accent); color:var(--accent);}
+#view3dStatus{font-size:13px; color:var(--secondary-dim); margin:0;}
+.stage-3d-link{margin-top:2px;}
+@media (max-width:560px){
+  .viewer3d-bar{flex-direction:column; align-items:stretch;}
+  .viewer3d-btns .ghost-btn{flex:1;}
+}
+@media (prefers-reduced-motion: reduce){
+  .stage img.base, .ink-canvas, .print-area{transition:none;}
 }
