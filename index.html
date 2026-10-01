@@ -17,9 +17,13 @@
     <ul class="nav-links">
       <li><a href="#catalogo">Catálogo</a></li>
       <li><a href="#personalizar">Personalizar</a></li>
+      <li><a href="#detalles">Detalles</a></li>
+      <li><a href="#inspiracion">Inspiración</a></li>
     </ul>
     <div class="nav-actions">
+      <button class="ghost-btn" id="openLogin">Iniciar sesión</button>
       <button class="ghost-btn" id="openRegister">Registrarse</button>
+      <button class="ghost-btn logged-in" id="userPill" style="display:none;">Hola</button>
       <button class="cart-btn" id="openCart">Carrito <span class="cart-count" id="cartCount">0</span></button>
     </div>
   </div>
@@ -55,11 +59,31 @@
           <span class="price-final">$96.000</span>
         </div>
         <div class="swatches" id="catalogSwatches"></div>
+        <div class="size-block">
+          <div class="size-head"><span>Talla</span><button type="button" class="link-btn size-guide-link">Guía de tallas</button></div>
+          <div class="sizes" id="catalogSizes" role="group" aria-label="Talla"></div>
+        </div>
         <div class="product-actions">
           <button class="btn btn-primary" id="addPlain">Agregar tal cual</button>
           <a href="#personalizar" class="btn btn-ghost" id="goCustomize">Personalizar esta camiseta</a>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<section class="specs" id="detalles">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Detalles de la prenda</h2>
+      <p>Lo que necesitas saber antes de comprar.</p>
+    </div>
+    <div class="spec-grid">
+      <div class="spec-card"><div class="k">Ajuste</div><h3>Regular Fit</h3><p>Corte recto clásico y calce unisex. Si prefieres un look holgado, sube una talla.</p></div>
+      <div class="spec-card"><div class="k">Tela</div><h3>180 g/m²</h3><p>100% algodón peinado: suave, fresco y con cuerpo, ideal para recibir estampado.</p></div>
+      <div class="spec-card"><div class="k">Estampado</div><h3>Hasta A4</h3><p>Área imprimible de 21 × 30 cm en pecho o espalda. Verás la guía punteada en el personalizador.</p></div>
+      <div class="spec-card"><div class="k">Cuidado</div><h3>Lavado</h3>
+        <ul><li>Lavar del revés en agua fría (máx. 30 °C)</li><li>No usar blanqueador</li><li>No secar en secadora</li><li>Planchar del revés, a baja temperatura</li></ul></div>
     </div>
   </div>
 </section>
@@ -72,11 +96,16 @@
     </div>
     <div class="custom-grid">
       <div class="stage-wrap">
+        <div class="view-tabs" id="viewTabs" role="tablist" aria-label="Vista de la camiseta">
+          <button type="button" class="active" data-side="front" role="tab">Frente <small id="cntFront"></small></button>
+          <button type="button" data-side="back" role="tab">Espalda <small id="cntBack"></small></button>
+        </div>
         <div class="stage" id="stage">
           <img class="base" id="stageImg" src="" alt="Vista previa camiseta">
+          <div class="print-area" id="printArea"><span>Área de impresión A4 · 21×30 cm</span></div>
           <div class="stage-empty-hint" id="stageHint">Sin estampado — se ve tan bien así</div>
         </div>
-        <p class="stage-tip">Toca un elemento y arrástralo sobre la camiseta para ubicarlo.</p>
+        <p class="stage-tip">Toca un elemento para seleccionarlo: arrástralo para moverlo y usa las esquinas para eliminar (×), rotar (↻) o cambiar el tamaño (⤡). Si se pone rojo, se sale del área imprimible.</p>
       </div>
 
       <div class="panel">
@@ -86,6 +115,11 @@
         <div class="field">
           <label>Color de la camiseta</label>
           <div class="swatches" id="customSwatches"></div>
+        </div>
+
+        <div class="field">
+          <label>Talla <button type="button" class="link-btn size-guide-link">Guía de tallas</button></label>
+          <div class="sizes" id="customSizes" role="group" aria-label="Talla"></div>
         </div>
 
         <div class="add-row">
@@ -122,6 +156,10 @@
             <label>Tamaño</label>
             <input type="range" id="scaleInput" min="0.5" max="2.2" step="0.05" value="1">
           </div>
+          <div class="field">
+            <label>Rotación</label>
+            <input type="range" id="rotInput" min="-180" max="180" step="1" value="0">
+          </div>
         </div>
 
         <div class="panel-actions">
@@ -133,6 +171,16 @@
   </div>
 </section>
 
+<section id="inspiracion">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Inspiración</h2>
+      <p>Ideas de diseños hechos con el personalizador. Toca uno para cargarlo y hacerlo tuyo.</p>
+    </div>
+    <div class="gallery" id="gallery"></div>
+  </div>
+</section>
+
 <footer>
   <div class="wrap">
     <a href="#top" class="logo" style="font-size:22px;">JE<span>B</span></a>
@@ -140,59 +188,111 @@
   </div>
 </footer>
 
-<div class="backdrop" id="backdrop"></div>
-<div class="drawer" id="drawer">
-  <div class="drawer-head">
-    <h3>Tu carrito</h3>
-    <button class="drawer-close" id="closeCart">&times;</button>
+<div class="backdrop" id="overlayBackdrop"></div>
+
+<!-- CARRITO -->
+<div class="modal modal-light modal-wide" id="cartModal">
+  <div class="modal-head-light">
+    <h3>Tu Carrito — JE<span>B</span></h3>
+    <button class="modal-close-light" id="closeCart">&times;</button>
   </div>
-  <div class="drawer-items" id="drawerItems">
+  <div class="cart-rows" id="drawerItems">
     <p class="drawer-empty">Tu carrito está vacío por ahora.</p>
   </div>
-  <div class="drawer-foot">
-    <div class="drawer-total"><span>Total</span><b id="drawerTotal">$0</b></div>
-    <button class="btn btn-primary" style="width:100%;" id="checkoutBtn">Finalizar compra</button>
+  <div class="cart-foot">
+    <div class="cart-total-row"><span>Total:</span><b id="drawerTotal">$0</b></div>
+    <button class="btn btn-primary" style="width:100%;" id="checkoutBtn">Finalizar Compra →</button>
   </div>
 </div>
 
-<div class="backdrop" id="regBackdrop"></div>
-<div class="modal" id="regModal">
-  <div class="drawer-head">
-    <h3 id="regTitle">Crea tu cuenta</h3>
-    <button class="drawer-close" id="closeRegister">&times;</button>
+<!-- INICIAR SESIÓN -->
+<div class="modal modal-light" id="loginModal">
+  <div class="modal-head-light modal-head-center">
+    <h3>JEB — Iniciar Sesión</h3>
+    <button class="modal-close-light" id="closeLogin">&times;</button>
   </div>
-  <form class="modal-body" id="registerForm" novalidate>
-    <div class="field">
+  <form class="modal-body-light" id="loginForm" novalidate>
+    <div class="field-light">
+      <label for="loginEmail">Correo electrónico</label>
+      <input type="email" id="loginEmail" placeholder="tucorreo@ejemplo.com">
+    </div>
+    <div class="field-light">
+      <label for="loginPass">Contraseña</label>
+      <input type="password" id="loginPass" placeholder="Mínimo 6 caracteres">
+    </div>
+    <p class="form-error" id="loginError"></p>
+    <button type="submit" class="btn btn-primary" style="width:100%;">Iniciar Sesión</button>
+    <div class="divider-row"><span></span>O continuar con:<span></span></div>
+    <div class="social-row">
+      <button type="button" class="social-btn" id="googleBtn" aria-label="Continuar con Google">G</button>
+      <button type="button" class="social-btn" id="facebookBtn" aria-label="Continuar con Facebook">f</button>
+      <button type="button" class="social-btn" id="appleBtn" aria-label="Continuar con Apple"></button>
+    </div>
+    <a href="#" class="auth-link" id="forgotPass">¿Olvidaste tu contraseña?</a>
+    <p class="auth-switch">¿No tienes cuenta? <a href="#" id="toRegister">Regístrate</a></p>
+  </form>
+</div>
+
+<!-- REGISTRO -->
+<div class="modal modal-light" id="regModal">
+  <div class="modal-head-light modal-head-center">
+    <h3 id="regTitle">JEB — Crear Cuenta</h3>
+    <button class="modal-close-light" id="closeRegister">&times;</button>
+  </div>
+  <form class="modal-body-light" id="registerForm" novalidate>
+    <div class="field-light">
       <label for="regName">Nombre completo</label>
       <input type="text" id="regName" placeholder="Tu nombre">
     </div>
     <div class="row-2">
-      <div class="field">
+      <div class="field-light">
         <label for="regAge">Edad</label>
         <input type="number" id="regAge" min="13" max="99" placeholder="18">
       </div>
-      <div class="field">
+      <div class="field-light">
         <label for="regCity">Ciudad</label>
         <input type="text" id="regCity" placeholder="Medellín">
       </div>
     </div>
-    <div class="field">
+    <div class="field-light">
       <label for="regEmail">Correo electrónico</label>
       <input type="email" id="regEmail" placeholder="tucorreo@ejemplo.com">
     </div>
     <div class="row-2">
-      <div class="field">
+      <div class="field-light">
         <label for="regPass">Contraseña</label>
         <input type="password" id="regPass" placeholder="Mínimo 6 caracteres">
       </div>
-      <div class="field">
+      <div class="field-light">
         <label for="regPass2">Confirmar contraseña</label>
         <input type="password" id="regPass2" placeholder="Repite la contraseña">
       </div>
     </div>
     <p class="form-error" id="regError"></p>
-    <button type="submit" class="btn btn-primary" style="width:100%;">Crear cuenta</button>
+    <button type="submit" class="btn btn-primary" style="width:100%;">Crear Cuenta</button>
+    <p class="auth-switch">¿Ya tienes cuenta? <a href="#" id="toLogin">Inicia sesión</a></p>
   </form>
+</div>
+
+<!-- GUÍA DE TALLAS -->
+<div class="modal modal-light" id="sizeModal">
+  <div class="modal-head-light">
+    <h3>Guía de tallas</h3>
+    <button class="modal-close-light" id="closeSize" aria-label="Cerrar">&times;</button>
+  </div>
+  <div class="modal-body-light">
+    <table class="size-table">
+      <thead><tr><th>Talla</th><th>Ancho (cm)</th><th>Largo (cm)</th></tr></thead>
+      <tbody id="sizeBody">
+        <tr data-size="S"><td>S</td><td>49</td><td>69</td></tr>
+        <tr data-size="M"><td>M</td><td>52</td><td>72</td></tr>
+        <tr data-size="L"><td>L</td><td>55</td><td>74</td></tr>
+        <tr data-size="XL"><td>XL</td><td>58</td><td>76</td></tr>
+        <tr data-size="XXL"><td>XXL</td><td>61</td><td>78</td></tr>
+      </tbody>
+    </table>
+    <p class="size-note">Ancho: de costura a costura, a la altura del pecho. Largo: del hombro al borde inferior. Toca una fila para elegir esa talla. Tip: mide una camiseta que ya te quede bien y compárala.</p>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
