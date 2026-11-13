@@ -171,7 +171,7 @@
   .layer img{pointer-events:none; display:block;}
   .layer .txt{pointer-events:none;}
 
-  .stage-tip{font-size:13px; color:var(--secondary-dim); text-align:center; max-width:300px;}
+  .stage-tip{font-size:13px; color:var(--secondary-dim); text-align:center; max-width:340px;}
 
   .panel{background:var(--bg-card); border:1px solid var(--line); border-radius:20px; padding:32px;}
   .panel h3{margin:0 0 6px; font-size:20px; font-weight:600;}
@@ -334,6 +334,10 @@
     .floaters img{animation:none;}
   }
 
+/* =====================================================
+   MEJORAS: escala uniforme, tallas, vistas, manijas,
+   área de impresión, detalles, galería y responsive
+   ===================================================== */
 
 /* Todas las camisetas comparten la misma caja (corrige la café pequeña) */
 .product-stage img{width:min(300px,100%); height:auto; aspect-ratio:420/507; object-fit:contain;}
@@ -481,3 +485,143 @@
 @media (prefers-reduced-motion: reduce){
   .stage img.base, .ink-canvas, .print-area{transition:none;}
 }
+
+/* v2 visor 3D: fondo de estudio oscuro con halo suave detrás de la prenda */
+.viewer3d-card{background:radial-gradient(ellipse at 50% 42%, #34343a 0%, #1c1c20 46%, #0b0b0d 100%);}
+#tee3d{height:min(620px,76vh); cursor:grab;}
+#tee3d:active{cursor:grabbing;}
+/* ===== v3: lienzo en pantalla completa (zoom) ===== */
+.stage-zoom-btn{
+  position:absolute; top:10px; right:10px; z-index:6; width:38px; height:38px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center; font-size:18px; line-height:1; cursor:pointer;
+  background:rgba(18,18,18,.72); color:var(--secondary); border:1px solid var(--line); backdrop-filter:blur(6px);
+}
+.stage-zoom-btn:hover, .stage-zoom-btn:focus-visible{border-color:var(--accent); color:var(--accent);}
+.stage-tools{display:none;}
+body.stage-zoom{overflow:hidden;}
+body.stage-zoom .stage-wrap{
+  position:fixed; inset:0; z-index:55; justify-content:center; gap:12px; overflow-y:auto;
+  background:#0c0c0e;
+  padding:max(12px, env(safe-area-inset-top)) 16px max(12px, env(safe-area-inset-bottom));
+}
+body.stage-zoom .stage{
+  max-width:none; width:min(100%, calc((100vh - 200px) * 340 / 410));
+  width:min(100%, calc((100dvh - 200px) * 340 / 410));
+}
+body.stage-zoom .stage-tip, body.stage-zoom #goView3d{display:none;}
+body.stage-zoom .stage-tools{display:flex; flex-direction:column; gap:10px; width:min(100%, 520px);}
+.stage-tools-hint{margin:0; text-align:center; font-size:13px; color:var(--secondary-dim);}
+.stage-tools-sliders{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+.stage-tools-sliders[hidden]{display:none;}
+.stage-tools-sliders label{display:flex; flex-direction:column; gap:6px; font-size:13px; color:var(--secondary-dim);}
+.stage-tools-sliders input[type="range"]{width:100%; accent-color:var(--accent); height:28px;}
+body.stage-zoom .handle{width:36px; height:36px; font-size:18px;}
+@media (max-width:420px){ .stage-tools-sliders{grid-template-columns:1fr;} }
+
+/* v3: el scroll a secciones no queda tapado por la barra fija */
+#visor3d, #personalizar{scroll-margin-top:64px;}
+/* v4: visor 3D con Three.js */
+#tee3d{position:relative; touch-action:pan-y; user-select:none;}
+#tee3d canvas{display:block; width:100%; height:100%; outline:none;}
+#tee3d:empty::after{content:""; position:absolute; inset:0; margin:auto; width:34px; height:34px; border-radius:50%;
+  border:3px solid rgba(255,255,255,.12); border-top-color:var(--accent); animation:tee3dSpin 1s linear infinite;}
+@keyframes tee3dSpin{to{transform:rotate(360deg);}}
+/* v5: efecto de scroll — las secciones se inclinan al salir (ver script.js §6) */
+#top, #catalogo, #detalles, #personalizar, #visor3d, #inspiracion{backface-visibility:hidden;}
+/* ===== v6: multi-producto ===== */
+/* portada de cada categoría */
+.cat-section{padding-top:70px;}
+.cat-cover{position:relative; border-radius:24px; overflow:hidden; margin-bottom:28px; background:#1f1f1f; border:1px solid var(--line);}
+.cat-cover img{display:block; width:100%; height:auto; aspect-ratio:1024/304; object-fit:cover;}   /* portada completa, sin recortes */
+.cat-cover h2{position:absolute; left:28px; bottom:20px; margin:0; font-size:clamp(28px,4vw,44px); font-weight:600;
+  text-shadow:0 2px 18px rgba(0,0,0,.65);}
+.cat-cover::after{content:""; position:absolute; inset:0; background:linear-gradient(180deg, transparent 45%, rgba(0,0,0,.55)); pointer-events:none;}
+.cat-cover h2{z-index:1;}
+.product-card:empty{min-height:420px; background:var(--bg-card) linear-gradient(90deg, transparent, rgba(255,255,255,.04), transparent) 0 0/40% 100% no-repeat;
+  animation:cardLoad 1.2s linear infinite;}
+@keyframes cardLoad{from{background-position:-40% 0} to{background-position:140% 0}}
+
+/* selector de producto en el personalizador */
+.prod-tabs{display:grid; grid-template-columns:repeat(3,1fr); gap:6px; background:var(--bg-soft); border:1px solid var(--line); border-radius:999px; padding:4px;}
+.prod-tabs button{border:0; background:transparent; color:var(--secondary-dim); font:inherit; font-weight:600; font-size:14px; padding:9px 6px; border-radius:999px; cursor:pointer;}
+.prod-tabs button:hover{color:var(--secondary);}
+.prod-tabs button.active{background:var(--accent); color:#121212;}
+
+/* menú móvil */
+.nav-toggle{display:none; width:42px; height:42px; border-radius:12px; border:1px solid var(--line); background:transparent; cursor:pointer;
+  flex-direction:column; align-items:center; justify-content:center; gap:5px; padding:0;}
+.nav-toggle span{display:block; width:18px; height:2px; border-radius:2px; background:var(--secondary); transition:transform .2s, opacity .2s;}
+nav.menu-open .nav-toggle span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+nav.menu-open .nav-toggle span:nth-child(2){opacity:0;}
+nav.menu-open .nav-toggle span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+@media (max-width:860px){
+  .nav-toggle{display:flex; order:3;}
+  .nav-links{display:flex !important; position:absolute; top:100%; left:0; right:0; flex-direction:column; align-items:stretch; gap:0;
+    background:#121212; border-bottom:1px solid var(--line); box-shadow:0 18px 30px rgba(0,0,0,.45);
+    max-height:0; overflow:hidden; transition:max-height .25s ease; z-index:45;}
+  nav.menu-open .nav-links{max-height:360px;}
+  .nav-links li a{display:block; padding:15px 24px; border-top:1px solid var(--line); font-size:16px;}
+}
+@media (max-width:560px){
+  .cat-cover h2{left:14px; bottom:10px; font-size:22px;}
+}
+#buzos, #gorras{scroll-margin-top:64px;}
+/* v7: celulares angostos — sesión dentro del menú ☰ */
+.nav-mobile-only{display:none;}
+@media (max-width:480px){
+  .nav-mobile-only{display:block;}
+  #openLogin, #openRegister{display:none !important;}
+  nav .logo{font-size:22px;}
+}
+/* v8: probador virtual con IA */
+.tryon-open{margin-top:8px;}
+#tryonModal{width:min(880px, 94vw);}
+.tryon-body{display:flex; flex-direction:column; gap:14px;}
+.tryon-intro{margin:0; color:#555; font-size:14px;}
+.tryon-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:12px;}
+.tryon-slot{margin:0; display:flex; flex-direction:column; gap:6px;}
+.tryon-slot figcaption{font-size:13px; font-weight:600; color:#333; text-align:center;}
+.tryon-drop{position:relative; aspect-ratio:3/4; border-radius:14px; border:2px dashed #cfcfd4; background:#f2f2f4; display:flex; align-items:center; justify-content:center; overflow:hidden; cursor:pointer; text-align:center; padding:10px; font-size:13px; color:#666;}
+.tryon-drop.tryon-static{cursor:default; border-style:solid; border-color:#e3e3e7;}
+.tryon-drop img{position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#fff;}
+.tryon-result .tryon-drop{border-color:var(--accent);}
+.tryon-status{margin:0; min-height:20px; font-size:14px; color:#333;}
+.tryon-status.error{color:#c62828;}
+.tryon-actions{display:flex; gap:10px; flex-wrap:wrap;}
+.tryon-actions .btn[disabled]{opacity:.6; cursor:wait;}
+.tryon-config{font-size:13px; color:#444; background:#f6f6f8; border-radius:12px; padding:10px 14px;}
+.tryon-config summary{cursor:pointer; font-weight:600;}
+.tryon-token-row{display:flex; gap:8px;}
+.tryon-token-row input{flex:1; min-width:0; padding:10px 12px; border:1px solid #d7d7dc; border-radius:10px; font:inherit;}
+.tryon-privacy{margin:0; font-size:12px; color:#777;}
+@media (max-width:640px){ .tryon-grid{grid-template-columns:1fr 1fr;} .tryon-result{grid-column:1 / -1;} }
+.tryon-drop img[hidden], .tryon-drop span[hidden], #tryonDownload[hidden]{display:none !important;}
+.tryon-drop span{position:relative; z-index:1;}
+
+.tryon-steps{margin:8px 0 10px; padding-left:20px; line-height:1.6;}
+.tryon-steps a{color:var(--accent); font-weight:600;}
+.tryon-token-row .btn{flex:0 0 auto; padding:10px 18px;}
+
+.tryon-gemini{font-size:13px; color:#333; background:#fff7f3; border:1px solid #ffd9c9; border-radius:12px; padding:10px 14px;}
+.tryon-gemini p{margin:0;}
+.tryon-gemini .link-btn{color:var(--accent); font-weight:700; cursor:pointer; background:none; border:0; padding:0; font:inherit; text-decoration:underline;}
+
+/* v9: probador centrado en Gemini */
+.tryon-flow{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px;}
+.tryon-flow li{display:flex; gap:12px; align-items:flex-start; background:#fff; border:1px solid #e6e6ea; border-radius:14px; padding:12px 14px; font-size:14px; color:#333; line-height:1.5;}
+.tryon-flow li > div{display:flex; flex-direction:column; gap:8px; flex:1;}
+.tryon-num{flex:0 0 28px; height:28px; border-radius:50%; background:var(--accent); color:#121212; font-weight:700; display:flex; align-items:center; justify-content:center;}
+.tryon-big{align-self:flex-start; cursor:pointer;}
+.tryon-row{display:flex; gap:8px; flex-wrap:wrap;}
+.tryon-flow .btn-ghost{color:#222; border-color:#cfcfd4;}
+.tryon-flow li p{margin:0;}
+
+.tryon-result .tryon-drop.drag{background:#fff1ea; border-style:dashed;}
+
+/* v10: misma apariencia con el celular/computador en modo oscuro o claro
+   - la página declara su propio esquema (oscuro): el navegador no invierte ni "oscurece" colores
+   - las ventanas claras (carrito, sesión, probador) declaran esquema claro para sus campos */
+:root{color-scheme:only dark; forced-color-adjust:none;}
+html, body{background:#121212;}
+.modal-light input, .modal-light select, .modal-light textarea{color:#121212;}
+img, canvas, video, svg{forced-color-adjust:none;}
